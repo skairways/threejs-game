@@ -1,0 +1,103 @@
+* {
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+}
+
+body {
+	margin: 0;
+	overflow: hidden;
+}
+
+canvas {
+	background-color: #FFFFFF;
+}
+
+#start {
+	cursor: pointer;
+	height: 100%;
+	margin: 0;
+	position: absolute;
+	width: 100%;
+}
+
+.center {
+	background-color: rgba(0, 0, 0, 0.8);
+	color: #CCCCCC;
+	font-family: sans-serif;
+	font-size: 64px;
+	height: 100%;
+	text-align: center;
+	width: 100%;
+
+	display: -webkit-box;
+	display: -moz-box;
+	display: box;
+
+	-webkit-box-orient: horizontal;
+	-moz-box-orient: horizontal;
+	-ms-box-orient: horizontal;
+	box-orient: horizontal;
+
+	-webkit-box-pack: center;
+	-moz-box-pack: center;
+	-ms-box-pack: center;
+	box-pack: center;
+
+	-webkit-box-align: center;
+	-moz-box-align: center;
+	-ms-box-align: center;
+	box-align: center;
+}
+
+#hud,
+#hurt {
+	bottom: 0;
+	left: 0;
+	pointer-events: none;
+	position: absolute;
+	right: 0;
+	top: 0;
+}
+
+#crosshairs {
+	left: 50%;
+	position: absolute;
+	top: 50%;
+}
+#crosshairs:before,
+#crosshairs:after {
+	background-color: rgba(64, 64, 64, 0.35);
+	content: "";
+	height: 20px;
+	margin-top: -10px;
+	position: absolute;
+	width: 1px;
+}
+#crosshairs:after {
+	height: 1px;
+	margin: 0 0 0 -10px;
+	width: 20px;
+}
+
+#hurt {
+	background-color: rgba(255, 0, 0, 0.35);
+}
+
+#upper-right {
+	color: #333333;
+	font: bold 30px sans-serif;
+	opacity: 0.85;
+	position: absolute;
+	right: 10px;
+	top: 10px;
+}
+
+#health.low {
+	color: darkred;
+}
+
+.hidden {
+	display: none;
+}
