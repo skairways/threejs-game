@@ -30,12 +30,12 @@ Player.SPEED = 200;
 Player.RADIUS = 20;
 
 Player.prototype.update = (function() {
-	var halfAccel = new THREE.Vector3();
-	var scaledVelocity = new THREE.Vector3();
+	let halfAccel = new THREE.Vector3();
+	let scaledVelocity = new THREE.Vector3();
 
 	return function(delta) {
 		// Compute look vector
-		var r = this._aggregateRotation
+		let r = this._aggregateRotation
 			.multiply(this.inverseLook)
 			.multiply(this.mouseSensitivity)
 			.multiplyScalar(delta)
@@ -56,9 +56,9 @@ Player.prototype.update = (function() {
 		// Move
 		halfAccel.copy(this.acceleration).multiplyScalar(delta * 0.5);
 		this.velocity.add(halfAccel);
-		var squaredManhattanVelocity = this.velocity.x*this.velocity.x + this.velocity.z*this.velocity.z;
+		let squaredManhattanVelocity = this.velocity.x*this.velocity.x + this.velocity.z*this.velocity.z;
 		if (squaredManhattanVelocity > Player.SPEED*Player.SPEED) {
-			var scalar = Player.SPEED / Math.sqrt(squaredManhattanVelocity);
+			let scalar = Player.SPEED / Math.sqrt(squaredManhattanVelocity);
 			this.velocity.x *= scalar;
 			this.velocity.z *= scalar;
 		}
@@ -99,7 +99,7 @@ Player.prototype.collideFloor = function(floorY) {
 Player.prototype.jump = function(distance) {
 	if (this.canJump) {
 		distance = distance || this.jumpHeight;
-		var thrust = Math.sqrt(Math.abs(2 * distance * this.acceleration.y));
+		let thrust = Math.sqrt(Math.abs(2 * distance * this.acceleration.y));
 		this.velocity.y += thrust;
 		this.canJump = false;
 	}

@@ -13,7 +13,7 @@ Bullet.prototype.constructor = Bullet;
 Bullet.RADIUS = 5;
 
 Bullet.prototype.update = (function() {
-	var scaledDirection = new THREE.Vector3();
+	let scaledDirection = new THREE.Vector3();
 	return function(delta) {
 		scaledDirection.copy(this.direction).multiplyScalar(this.speed*delta);
 		this.position.add(scaledDirection);

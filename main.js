@@ -1,25 +1,25 @@
 // GLOBALS ====================================================================
 
-var scene, renderer, camera, clock, player;
+let scene, renderer, camera, clock, player;
 
-var HORIZONTAL_UNIT = 100,
+let HORIZONTAL_UNIT = 100,
 			VERTICAL_UNIT = 100,
 		INV_MAX_FPS = 1 / 100,
 		FIRING_DELAY = 1000,
 		BOT_MAX_AXIAL_ERROR = 10,
 		BOT_MOVE_DELAY = 2000;
-var frameDelta = 0,
+let frameDelta = 0,
 		paused = true;
-var spawnPoints = [];
-var floor;
-var bullets = [],
+let spawnPoints = [];
+let floor;
+let bullets = [],
 		deadBulletPool = [];
-var enemies = [],
+let enemies = [],
 		numEnemies = 5;
 
 // MAPS =======================================================================
 
-var map = "   XXXXXXXX     XXXXXXXX      \n" +
+let map = "   XXXXXXXX     XXXXXXXX      \n" +
 					"   X      X     X      X      \n" +
 					"   X  S   X     X   S  X      \n" +
 					"   X      XXXXXXX      X      \n" +
@@ -46,10 +46,11 @@ var map = "   XXXXXXXX     XXXXXXXX      \n" +
 					"     XX   S  XXXXXXXX     X   \n" +
 					"      XX    XX      XXXXXXX   \n" +
 					"       XXXXXX                 ";
+
 map = map.split("\n");
-var ZSIZE = map.length * HORIZONTAL_UNIT,
+let ZSIZE = map.length * HORIZONTAL_UNIT,
 		XSIZE = map[0].length * HORIZONTAL_UNIT;
-var meshMap = new Array(map.length);
+let meshMap = new Array(map.length);
 
 function MapCell() {
 	this.set.apply(this, arguments);
@@ -121,7 +122,7 @@ function setupWorld() {
 	player.position.y = 20;
 	scene.add(player);
 
-	var light = new THREE.DirectionalLight(0xfffaf3, 1.5);
+	let light = new THREE.DirectionalLight(0xfffaf3, 1.5);
 	light.position.set(1, 1, 1);
 	scene.add(light);
 	light = new THREE.DirectionalLight(0xf3faff, 0.75);
@@ -130,8 +131,8 @@ function setupWorld() {
 }
 
 function setupMap() {
-	for (var i = 0, rows = map.length; i < rows; i++) {
-		for (var j = 0, cols = map[i].length; j < cols; j++) {
+	for (let i = 0, rows = map.length; i < rows; i++) {
+		for (let j = 0, cols = map[i].length; j < cols; j++) {
 			if (typeof meshMap[i] === 'undefined') {
 				meshMap[i] = new Array(cols);
 			}
@@ -139,20 +140,20 @@ function setupMap() {
 		}
 	}
 
-	var material = new THREE.MeshPhongMaterial({ color: 0xaaaaaa });
-	var floorGeo = new THREE.PlaneGeometry(XSIZE, ZSIZE, 20, 20);
+	let material = new THREE.MeshPhongMaterial({ color: 0xaaaaaa });
+	let floorGeo = new THREE.PlaneGeometry(XSIZE, ZSIZE, 20, 20);
 	floor = new THREE.Mesh(floorGeo, material);
 	floor.rotation.x = Math.PI * -0.5;
 	floor.position.set(HORIZONTAL_UNIT, 0, -HORIZONTAL_UNIT); // Ideally this wouldn't be needed
 	scene.add(floor);
 }
 
-var addVoxel = (function() {
-	var XOFFSET = map.length * 0.5 * HORIZONTAL_UNIT,
+let addVoxel = (function() {
+	let XOFFSET = map.length * 0.5 * HORIZONTAL_UNIT,
 			ZOFFSET = map[0].length * 0.5 * HORIZONTAL_UNIT,
 			materials = [];
-	for (var i = 0; i < 8; i++) {
-		materials.push(new THREE.MeshPhongMaterial({
+	for (let i = 0; i < 8; i++) {
+		materials.push(new THREE.MeshBasicMaterial({
 			color: new THREE.Color().setHSL(Math.random() * 0.2 + 0.3, 0.5, Math.random() * 0.25 + 0.75)
 		}));
 	}
@@ -160,10 +161,10 @@ var addVoxel = (function() {
 		return materials[Math.floor(Math.random() * materials.length)].clone();
 	}
 
-	var WALL = new THREE.CubeGeometry(HORIZONTAL_UNIT, VERTICAL_UNIT, HORIZONTAL_UNIT);
+	let WALL = new THREE.CubeGeometry(HORIZONTAL_UNIT, VERTICAL_UNIT, HORIZONTAL_UNIT);
 
 	return function(type, row, col) {
-		var z = (row+1) * HORIZONTAL_UNIT - ZOFFSET,
+		let z = (row+1) * HORIZONTAL_UNIT - ZOFFSET,
 				x = (col+1) * HORIZONTAL_UNIT - XOFFSET,
 				mesh;
 		switch(type) {
@@ -189,12 +190,12 @@ var addVoxel = (function() {
 })();
 
 function setupEnemies() {
-	THREE.ImageUtils.loadTexture('javoh.jpg', undefined, function(texture) {
-		var geometry = new THREE.CubeGeometry(Player.RADIUS*2, Player.RADIUS*2, Player.RADIUS*2);
-		var material = new THREE.MeshBasicMaterial({ map: texture });
-		var now = Date.now();
-		for (var i = 0; i < numEnemies; i++) {
-			var enemy = new Player(geometry.clone(), material.clone());
+	THREE.ImageUtils.loadTexture('face.jpg', undefined, function(texture) {
+		let geometry = new THREE.CubeGeometry(Player.RADIUS*2, Player.RADIUS*2, Player.RADIUS*2);
+		let material = new THREE.MeshBasicMaterial({ map: texture });
+		let now = Date.now();
+		for (let i = 0; i < numEnemies; i++) {
+			let enemy = new Player(geometry.clone(), material.clone());
 			spawn(enemy);
 			enemies.push(enemy);
 			scene.add(enemy);
@@ -223,14 +224,14 @@ function update(delta) {
 	player.update(delta);
 	checkPlayerCollision(player);
 
-	for (var i = bullets.length - 1; i >= 0; i--) {
+	for (let i = bullets.length - 1; i >= 0; i--) {
 		bullets[i].update(delta);
 		checkBulletCollision(bullets[i], i);
 	}
 
-	var now = Date.now();
-	for (var j = 0; j < numEnemies; j++) {
-		var enemy = enemies[j];
+	let now = Date.now();
+	for (let j = 0; j < numEnemies; j++) {
+		let enemy = enemies[j];
 		enemy.update(delta);
 		checkPlayerCollision(enemy);
 		if (enemy.health <= 0) {
@@ -254,14 +255,14 @@ function update(delta) {
 
 function spawn(unit) {
 	unit = unit || player;
-	var cell = new MapCell(), point;
+	let cell = new MapCell(), point;
 	do {
 		point = spawnPoints[Math.floor(Math.random() * spawnPoints.length)];
 		mapCellFromPosition(point, cell);
 	} while (isPlayerInCell(cell.row, cell.col));
 	unit.position.copy(point);
 	unit.position.y = unit.cameraHeight;
-	var direction = (point.z > 0 ? 0 : -1) * Math.PI;
+	let direction = (point.z > 0 ? 0 : -1) * Math.PI;
 	unit.rotation.set(0, direction, 0);
 }
 
@@ -270,7 +271,7 @@ function respawn() {
 	player.respawning = true;
 	document.getElementById('crosshairs').className = 'hidden';
 	document.getElementById('respawn').className = 'center';
-	var countdown = document.querySelectorAll('#respawn .countdown')[0];
+	let countdown = document.querySelectorAll('#respawn .countdown')[0];
 	setTimeout(function() {
 		countdown.textContent = '2';
 		setTimeout(function() {
@@ -288,12 +289,12 @@ function respawn() {
 	}, 1000);
 }
 
-var isPlayerInCell = (function() {
-	var cell = new MapCell();
+let isPlayerInCell = (function() {
+	let cell = new MapCell();
 	return function(row, col) {
 		mapCellFromPosition(player.position, cell);
 		if (cell.row == row && cell.col == col) return true;
-		for (var i = 0, l = enemies.length; i < l; i++) {
+		for (let i = 0, l = enemies.length; i < l; i++) {
 			mapCellFromPosition(enemies[i].position, cell);
 			if (cell.row == row && cell.col == col) return true;
 		}
@@ -303,8 +304,8 @@ var isPlayerInCell = (function() {
 
 function move(bot) {
 	bot.rotation.y = Math.random() * Math.PI * 2;
-	var leftBias = bot.moveDirection.LEFT ? -0.1 : 0.1;
-	var forwardBias = bot.moveDirection.FORWARD ? -0.1 : 0.1;
+	let leftBias = bot.moveDirection.LEFT ? -0.1 : 0.1;
+	let forwardBias = bot.moveDirection.FORWARD ? -0.1 : 0.1;
 	bot.moveDirection.LEFT = Math.random() + leftBias < 0.1;
 	bot.moveDirection.RIGHT = !bot.moveDirection.LEFT && Math.random() + leftBias < 0.1;
 	bot.moveDirection.FORWARD = Math.random() + forwardBias < 0.8;
@@ -314,8 +315,8 @@ function move(bot) {
 
 // COLLISION =================================================================
 
-var checkPlayerCollision = (function() {
-	var cell = new MapCell();
+let checkPlayerCollision = (function() {
+	let cell = new MapCell();
 	return function(player) {
 		player.collideFloor(floor.position.y);
 		mapCellFromPosition(player.position, cell);
@@ -327,7 +328,7 @@ var checkPlayerCollision = (function() {
 				}
 				break;
 			case 'T':
-				var topPosition = cell.mesh.position.y + VERTICAL_UNIT * 0.5;
+				let topPosition = cell.mesh.position.y + VERTICAL_UNIT * 0.5;
 				if (player.collideFloor(topPosition)) {
 					player.canJump = true;
 				}
@@ -342,8 +343,8 @@ var checkPlayerCollision = (function() {
 	};
 })();
 
-var checkBulletCollision = (function() {
-	var cell = new MapCell();
+let checkBulletCollision = (function() {
+	let cell = new MapCell();
 	function removeBullet(bullet, i) {
 		scene.remove(bullet);
 		deadBulletPool.push(bullet);
@@ -354,7 +355,7 @@ var checkBulletCollision = (function() {
 			hurt(bullet);
 			removeBullet(bullet, i);
 		}
-		for (var j = 0; j < numEnemies; j++) {
+		for (let j = 0; j < numEnemies; j++) {
 			if (bullet.player !== enemies[j] && spheresOverlap(bullet, enemies[j])) {
 				enemies[j].health -= bullet.damage;
 				removeBullet(bullet, i);
@@ -373,9 +374,9 @@ var checkBulletCollision = (function() {
 
 function mapCellFromPosition(position, cell) {
 	cell = cell || new MapCell();
-	var XOFFSET = (map.length+1) * 0.5 * HORIZONTAL_UNIT,
+	let XOFFSET = (map.length+1) * 0.5 * HORIZONTAL_UNIT,
 			ZOFFSET = (map[0].length+1) * 0.5 * HORIZONTAL_UNIT;
-	var mapCol = Math.floor((position.x + XOFFSET) / HORIZONTAL_UNIT) - 1,
+	let mapCol = Math.floor((position.x + XOFFSET) / HORIZONTAL_UNIT) - 1,
 			mapRow = Math.floor((position.z + ZOFFSET) / HORIZONTAL_UNIT) - 1,
 			char = map[mapRow].charAt(mapCol),
 			mesh = meshMap[mapRow][mapCol];
@@ -383,11 +384,11 @@ function mapCellFromPosition(position, cell) {
 }
 
 function moveOutside(meshPosition, playerPosition) {
-	var mw = HORIZONTAL_UNIT, md = HORIZONTAL_UNIT,
+	let mw = HORIZONTAL_UNIT, md = HORIZONTAL_UNIT,
 			mx = meshPosition.x - mw * 0.5, mz = meshPosition.z - md * 0.5;
-	var px = playerPosition.x, pz = playerPosition.z;
+	let px = playerPosition.x, pz = playerPosition.z;
 	if (px > mx && px < mx + mw && pz > mz && pz < mz + md) {
-		var xOverlap = px - mx < mw * 0.5 ? px - mx : px - mx - mw,
+		let xOverlap = px - mx < mw * 0.5 ? px - mx : px - mx - mw,
 				zOverlap = pz - mz < md * 0.5 ? pz - mz : pz - mz - md;
 		if (Math.abs(xOverlap) > Math.abs(zOverlap)) playerPosition.x -= xOverlap;
 		else playerPosition.z -= zOverlap;
@@ -396,9 +397,9 @@ function moveOutside(meshPosition, playerPosition) {
 
 // SHOOTING ===================================================================
 
-var shoot = (function() {
-	var negativeZ = new THREE.Vector3(0, 0, -1);
-	var error = new THREE.Vector3();
+let shoot = (function() {
+	let negativeZ = new THREE.Vector3(0, 0, -1);
+	let error = new THREE.Vector3();
 	function produceError(deg) {
 		if (typeof deg === 'undefined') deg = BOT_MAX_AXIAL_ERROR;
 		return Math.random() * (deg / 90) - (deg / 180);
@@ -423,7 +424,7 @@ var shoot = (function() {
 })();
 
 function spheresOverlap(obj1, obj2) {
-	var combinedRadius = obj1.constructor.RADIUS + obj2.constructor.RADIUS;
+	let combinedRadius = obj1.constructor.RADIUS + obj2.constructor.RADIUS;
 	return combinedRadius * combinedRadius >= obj1.position.distanceToSquared(obj2.position);
 }
 
@@ -513,7 +514,7 @@ document.addEventListener('click', function(event) {
 
 document.getElementById('start').addEventListener('click', function() {
 	if (BigScreen.enabled) {
-		var instructions = this,
+		let instructions = this,
 				hud = document.getElementById('hud');
 		BigScreen.request(document.body /*renderer.domElement*/, function() {
 			PL.requestPointerLock(document.body /*renderer.domElement*/, function() {
